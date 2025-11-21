@@ -1,0 +1,26 @@
+{% extends 'store/base.html' %}
+
+{% block title %}{{ category.name }} | Zishan Fashion{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">{{ category.name }}</h2>
+
+<div class="row">
+    {% for product in products %}
+    <div class="col-md-3 mb-3">
+        <div class="card h-100">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="card-text">₹{{ product.price }}</p>
+                <a href="/product/{{ product.slug }}/" class="btn btn-primary">View</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p>No products in this category yet.</p>
+    {% endfor %}
+</div>
+{% endblock %}

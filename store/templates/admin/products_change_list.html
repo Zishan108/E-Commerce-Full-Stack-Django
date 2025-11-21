@@ -1,0 +1,15 @@
+{% extends "admin/change_list.html" %}
+
+{% block object-tools-items %}
+    <div class="object-tools">
+        <ul class="object-tools">
+            <li>
+                <a class="addlink" href="{% url 'admin:delete_all_products' %}" 
+                   style="background-color:#d9534f; color:white; padding:5px 10px; border-radius:3px;">
+                    Delete ALL Products
+                </a>
+            </li>
+        </ul>
+    </div>
+    {{ block.super }}
+{% endblock %}

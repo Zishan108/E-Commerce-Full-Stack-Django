@@ -1,0 +1,39 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Checkout Success{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Thank you for your purchase!</h2>
+
+    <p>Your order <strong>#{{ order.order_id|default:order.id }}</strong> has been successfully placed.</p>
+
+    {% if order.items.all %}
+    <h4 class="mt-3">Order Summary:</h4>
+    <table class="table table-bordered mt-2">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order.items.all %}
+            <tr>
+                <td>{{ item.product.name }}</td>
+                <td>${{ item.price }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>${{ item.total_price }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h4 class="mt-3">Total Paid: ₹{{ total }}</h4>
+    {% endif %}
+
+    <a href="{% url 'store:home' %}" class="btn btn-primary mt-3">Continue Shopping</a>
+</div>
+{% endblock %}

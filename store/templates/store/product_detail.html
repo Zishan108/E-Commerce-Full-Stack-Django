@@ -1,0 +1,37 @@
+{% extends 'store/base.html' %}
+
+{% block title %}{{ product.name }} | Zishan Fashion{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Product Image -->
+    <div class="col-md-6">
+        {% if product.image %}
+            <img src="{{ product.image.url }}" class="img-fluid" alt="{{ product.name }}">
+        {% else %}
+            <img src="https://via.placeholder.com/400x400?text=No+Image" class="img-fluid" alt="No image">
+        {% endif %}
+    </div>
+
+    <!-- Product Details -->
+    <div class="col-md-6">
+        <h2>{{ product.name }}</h2>
+        <p class="text-muted">
+            Category: 
+            <a href="{% url 'store:category_products' product.category.slug %}">{{ product.category.name }}</a>
+        </p>
+        <h4 class="text-success">₹{{ product.price }}</h4>
+        <p>{{ product.description|default:"No description available." }}</p>
+        <p>Stock: {{ product.stock }}</p>
+
+        <!-- Add to Cart Button -->
+        {% if product.stock > 0 %}
+            <a href="{% url 'store:add_to_cart' product.id %}" class="btn btn-primary">
+                Add to Cart
+            </a>
+        {% else %}
+            <button class="btn btn-secondary" disabled>Out of Stock</button>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

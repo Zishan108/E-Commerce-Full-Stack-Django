@@ -1,0 +1,38 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Home | Zishan Fashion{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Categories</h2>
+<div class="row mb-5">
+    {% for cat in categories %}
+    <div class="col-md-3 mb-3">
+        <a href="/category/{{ cat.slug }}/" class="text-decoration-none">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">{{ cat.name }}</h5>
+                </div>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+
+<h2 class="mb-4">Latest Products</h2>
+<div class="row">
+    {% for product in products %}
+    <div class="col-md-3 mb-3">
+        <div class="card h-100">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="card-text">₹{{ product.price }}</p>
+                <a href="/product/{{ product.slug }}/" class="btn btn-primary">View</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

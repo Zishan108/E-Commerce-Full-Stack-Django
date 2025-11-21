@@ -1,0 +1,17 @@
+# Python
+*.pyc
+__pycache__/
+
+# Virtual environment
+venv/
+
+# Django stuff
+db.sqlite3
+*.log
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Don't ignore media/images
+!media/

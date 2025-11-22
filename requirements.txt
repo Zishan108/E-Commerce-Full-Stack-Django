@@ -4,3 +4,4 @@ mysqlclient
 pillow
 djangorestframework-simplejwt
 drf-yasg
+django-widget-tweaks

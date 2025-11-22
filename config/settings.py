@@ -19,10 +19,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-!5)ijv2xko$#9zo(lng$b7o0hs&0%y$*ddk-tme3c0@wee6f=v'
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
@@ -44,9 +42,11 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'drf_yasg',
     'import_export',
+    'widget_tweaks',
 
-    # My app
+    # My apps
     'store',
+    'users',
 ]
 
 
@@ -65,7 +65,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],  # project-level templates folder
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -96,8 +96,6 @@ DATABASES = {
         },
     }
 }
-
-
 
 
 # Password validation
@@ -136,10 +134,30 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Default primary key field type
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Custom User Model
+AUTH_USER_MODEL = 'users.User'
+
+# Login / Logout settings
+LOGIN_URL = 'users:login'
+LOGIN_REDIRECT_URL = 'store:home'
+LOGOUT_REDIRECT_URL = 'store:home'
+
+# Email backend for dev/testing (prints emails to console)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'noreply@fashionstore.com'
+
+# Email Backend (Gmail SMTP)
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'zishan.redemption@gmail.com'         # <-- your Gmail address
+# EMAIL_HOST_PASSWORD = 'your_app_password_here' # <-- see step 2
+# DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

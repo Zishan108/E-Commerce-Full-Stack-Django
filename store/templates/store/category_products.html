@@ -1,80 +1,461 @@
 {% extends 'store/base.html' %}
+{% load static %}
 
 {% block title %}{{ category.name }} | Zishan Fashion{% endblock %}
 
 {% block content %}
-<h2 class="mb-4">{{ category.name }}</h2>
-
-<div id="cart-alert" class="position-fixed top-0 end-0 m-3" style="z-index: 9999;"></div>
-
-<div class="row">
-    {% for product in products %}
-    <div class="col-md-3 mb-3">
-        <div class="card h-100">
-            {% if product.image %}
-            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+<!-- Category Hero Slider -->
+{% if category.slug == 'men' or category.slug == 'women' %}
+<section class="category-hero-slider mb-5">
+    <div id="categoryCarousel" class="carousel slide" data-bs-ride="carousel">
+        <!-- Indicators -->
+        <div class="carousel-indicators">
+            {% if category.slug == 'men' %}
+                <button type="button" data-bs-target="#categoryCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#categoryCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#categoryCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                <button type="button" data-bs-target="#categoryCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
+            {% else %}
+                <button type="button" data-bs-target="#categoryCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#categoryCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#categoryCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
             {% endif %}
-            <div class="card-body">
-                <h5 class="card-title">{{ product.name }}</h5>
-                <p class="card-text">₹{{ product.price }}</p>
+        </div>
+        
+        <!-- Slides -->
+        <div class="carousel-inner rounded-3">
+            {% if category.slug == 'men' %}
+                <!-- Men's Category Slides -->
+                <div class="carousel-item active" data-bs-interval="2000">
+                    <img src="{% static 'images/men/men_1.jpg' %}" 
+                         class="d-block w-100" 
+                         alt="Men's Fashion Collection 1"
+                         style="height: 500px; object-fit: cover;">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h3 class="display-5 fw-bold">Men's Collection 1</h3>
+                        <p class="fs-5">Discover the latest trends in men's fashion</p>
+                    </div>
+                </div>
+                <div class="carousel-item" data-bs-interval="2000">
+                    <img src="{% static 'images/men/men_2.jpg' %}" 
+                         class="d-block w-100" 
+                         alt="Men's Fashion Collection 2"
+                         style="height: 500px; object-fit: cover;">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h3 class="display-5 fw-bold">Men's Collection 2</h3>
+                        <p class="fs-5">Discover the latest trends in men's fashion</p>
+                    </div>
+                </div>
+                <div class="carousel-item" data-bs-interval="2000">
+                    <img src="{% static 'images/men/men_3.jpg' %}" 
+                         class="d-block w-100" 
+                         alt="Men's Fashion Collection 3"
+                         style="height: 500px; object-fit: cover;">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h3 class="display-5 fw-bold">Men's Collection 3</h3>
+                        <p class="fs-5">Discover the latest trends in men's fashion</p>
+                    </div>
+                </div>
+                <div class="carousel-item" data-bs-interval="2000">
+                    <img src="{% static 'images/men/men_4.jpg' %}" 
+                         class="d-block w-100" 
+                         alt="Men's Fashion Collection 4"
+                         style="height: 500px; object-fit: cover;">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h3 class="display-5 fw-bold">Men's Collection 4</h3>
+                        <p class="fs-5">Discover the latest trends in men's fashion</p>
+                    </div>
+                </div>
+            {% else %}
+                <!-- Women's Category Slides -->
+                <div class="carousel-item active" data-bs-interval="2000">
+                    <img src="{% static 'images/women/women_1.jpg' %}" 
+                         class="d-block w-100" 
+                         alt="Women's Fashion Collection 1"
+                         style="height: 500px; object-fit: cover;">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h3 class="display-5 fw-bold">Women's Collection 1</h3>
+                        <p class="fs-5">Discover the latest trends in women's fashion</p>
+                    </div>
+                </div>
+                <div class="carousel-item" data-bs-interval="2000">
+                    <img src="{% static 'images/women/women_2.jpg' %}" 
+                         class="d-block w-100" 
+                         alt="Women's Fashion Collection 2"
+                         style="height: 500px; object-fit: cover;">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h3 class="display-5 fw-bold">Women's Collection 2</h3>
+                        <p class="fs-5">Discover the latest trends in women's fashion</p>
+                    </div>
+                </div>
+                <div class="carousel-item" data-bs-interval="2000">
+                    <img src="{% static 'images/women/women_3.jpg' %}" 
+                         class="d-block w-100" 
+                         alt="Women's Fashion Collection 3"
+                         style="height: 500px; object-fit: cover;">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h3 class="display-5 fw-bold">Women's Collection 3</h3>
+                        <p class="fs-5">Discover the latest trends in women's fashion</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Controls -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#categoryCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#categoryCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</section>
+{% endif %}
 
-                {% if product.stock > 0 %}
-                    {% if user.is_authenticated %}
-                    <a href="#" class="btn btn-success add-to-cart-btn" data-product-id="{{ product.id }}">
-                        Add to Cart
-                    </a>
+<!-- Category Header -->
+<div class="container-fluid px-3 px-md-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="display-6 fw-bold mb-0">{{ category.name }}</h2>
+        <span class="badge bg-primary fs-6">{{ products.count }} products</span>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="row g-4">
+        {% for product in products %}
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <div class="product-card card h-100 border-0 shadow-sm">
+                <div class="position-relative">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" 
+                         style="height: 250px; object-fit: cover;">
                     {% else %}
-                    <a href="{% url 'users:login' %}?next={{ request.path }}" class="btn btn-primary">
-                        Login to Add
-                    </a>
+                    <img src="https://via.placeholder.com/300x300?text=No+Image" class="card-img-top" alt="No image" 
+                         style="height: 250px; object-fit: cover;">
                     {% endif %}
-                {% else %}
-                    <button class="btn btn-secondary" disabled>Out of Stock</button>
-                {% endif %}
+                    
+                    {% if product.stock <= 0 %}
+                    <div class="position-absolute top-50 start-50 translate-middle">
+                        <span class="badge bg-danger">Out of Stock</span>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="card-body d-flex flex-column p-3">
+                    <h6 class="card-title fw-semibold mb-1">{{ product.name|truncatewords:4 }}</h6>
+                    <p class="card-text text-muted small mb-2">{{ product.category.name }}</p>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="fw-bold text-primary">₹{{ product.price }}</span>
+                        {% if product.stock > 0 %}
+                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">
+                            In Stock
+                        </span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mt-auto">
+                        {% if product.stock > 0 %}
+                            {% if user.is_authenticated %}
+                            <button type="button" class="btn btn-cart btn-sm w-100 mb-2" 
+                                    data-product-id="{{ product.id }}">
+                                <i class="fas fa-shopping-cart me-1"></i>Add to Cart
+                            </button>
+                            {% else %}
+                            <a href="{% url 'users:login' %}?next={{ request.path }}" class="btn btn-outline-primary btn-sm w-100 mb-2">
+                                <i class="fas fa-sign-in-alt me-1"></i>Login to Buy
+                            </a>
+                            {% endif %}
+                        {% else %}
+                            <button class="btn btn-secondary btn-sm w-100 mb-2" disabled>
+                                <i class="fas fa-times me-1"></i>Out of Stock
+                            </button>
+                        {% endif %}
+                        
+                        <a href="{% url 'store:product_detail' product.slug %}" class="btn btn-outline-dark btn-sm w-100">
+                            <i class="fas fa-eye me-1"></i>View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+            <h4 class="text-muted">No Products Available in {{ category.name }}</h4>
+            <p class="text-muted">Check back later for new arrivals!</p>
+            <a href="{% url 'store:home' %}" class="btn btn-primary">Back to Home</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 
-                <a href="/product/{{ product.slug }}/" class="btn btn-primary mt-2">View</a>
+<!-- Newsletter Section -->
+<section class="newsletter-section bg-light py-5 mt-5 {% if category.slug == 'men' %}newsletter-men{% elif category.slug == 'women' %}newsletter-women{% endif %}">
+    <div class="container-fluid px-3 px-md-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6 text-center">
+                <h3 class="fw-bold mb-3">Stay Updated with {{ category.name }} Fashion</h3>
+                <p class="text-muted mb-4">Subscribe to get exclusive {{ category.name }} collection updates and offers</p>
+                <div class="input-group mb-3">
+                    <input type="email" class="form-control form-control-lg" placeholder="Enter your email address" aria-label="Email">
+                    <button class="btn btn-primary btn-lg" type="button">Subscribe</button>
+                </div>
+                <small class="text-muted">By subscribing, you agree to our Privacy Policy</small>
             </div>
         </div>
     </div>
-    {% empty %}
-    <p>No products in this category yet.</p>
-    {% endfor %}
-</div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.category-hero-slider {
+    margin-top: -1rem;
+}
+
+.carousel-item {
+    transition: transform 0.6s ease-in-out;
+}
+
+.carousel-indicators button {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin: 0 5px;
+}
+
+.product-card {
+    transition: all 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.15) !important;
+}
+
+.product-actions {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.product-card:hover .product-actions {
+    opacity: 1;
+}
+
+.newsletter-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.newsletter-section h3,
+.newsletter-section p,
+.newsletter-section small {
+    color: white !important;
+}
+
+.newsletter-section .form-control:focus {
+    border-color: #ff6f61;
+    box-shadow: 0 0 0 0.2rem rgba(255, 111, 97, 0.25);
+}
+
+/* Category specific newsletter backgrounds */
+.newsletter-men {
+    background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%) !important;
+}
+
+.newsletter-women {
+    background: linear-gradient(135deg, #e84393 0%, #fd79a8 100%) !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .carousel-item img {
+        height: 400px !important;
+    }
+    
+    .carousel-caption h3 {
+        font-size: 1.5rem !important;
+    }
+    
+    .carousel-caption p {
+        font-size: 1rem !important;
+    }
+    
+    .display-6 {
+        font-size: 1.75rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .carousel-item img {
+        height: 300px !important;
+    }
+    
+    .carousel-caption {
+        display: none !important;
+    }
+    
+    .product-card .card-title {
+        font-size: 0.9rem;
+    }
+}
+
+/* Animation for cart alerts */
+@keyframes slideInDown {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.alert {
+    animation: slideInDown 0.3s ease;
+}
+</style>
 {% endblock %}
 
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const buttons = document.querySelectorAll('.add-to-cart-btn');
+    const buttons = document.querySelectorAll('.btn-cart');
     const alertDiv = document.getElementById('cart-alert');
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
 
     buttons.forEach(btn => {
         btn.addEventListener('click', function (e) {
             e.preventDefault();
             const productId = this.dataset.productId;
+            const button = this;
+            
+            // Add loading state
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Adding...';
+            button.disabled = true;
 
-            fetch(`/add-to-cart/${productId}/`, {
+            fetch(`/cart/add/${productId}/`, {
                 method: 'GET',
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                headers: { 
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
             })
-            .then(res => res.json())
+            .then(res => {
+                if (res.status === 403) {
+                    window.location.href = "{% url 'users:login' %}?next={{ request.path }}";
+                    return {};
+                }
+                return res.json();
+            })
             .then(data => {
+                // Reset button state
+                button.innerHTML = originalText;
+                button.disabled = false;
+                
                 if (data.status === 'success') {
                     const alertEl = document.createElement('div');
                     alertEl.className = 'alert alert-success alert-dismissible fade show';
-                    alertEl.innerHTML = `✅ ${data.message} <button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+                    alertEl.innerHTML = `
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <div>${data.message}</div>
+                            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+                        </div>
+                    `;
+                    alertDiv.appendChild(alertEl);
+
+                    // Update cart count in navbar
+                    if (data.cart_count !== undefined) {
+                        const cartCountElement = document.getElementById('cart-link');
+                        if (cartCountElement) {
+                            cartCountElement.innerHTML = `<i class="fas fa-shopping-cart me-2"></i>Cart (${data.cart_count})`;
+                        }
+                    }
+
+                    // Auto remove alert
+                    setTimeout(() => {
+                        if (alertEl.parentNode) {
+                            alertEl.classList.remove('show');
+                            setTimeout(() => alertEl.remove(), 300);
+                        }
+                    }, 4000);
+                } else if (data.message) {
+                    // Show error alert
+                    const alertEl = document.createElement('div');
+                    alertEl.className = 'alert alert-danger alert-dismissible fade show';
+                    alertEl.innerHTML = `
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <div>${data.message}</div>
+                            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+                        </div>
+                    `;
                     alertDiv.appendChild(alertEl);
 
                     setTimeout(() => {
-                        alertEl.classList.remove('show');
-                        alertEl.remove();
-                    }, 3000);
-                } else {
-                    alert(data.message);
+                        if (alertEl.parentNode) {
+                            alertEl.classList.remove('show');
+                            setTimeout(() => alertEl.remove(), 300);
+                        }
+                    }, 4000);
                 }
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                // Reset button state
+                button.innerHTML = originalText;
+                button.disabled = false;
+                
+                const alertEl = document.createElement('div');
+                alertEl.className = 'alert alert-danger alert-dismissible fade show';
+                alertEl.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <div>An error occurred while adding to cart.</div>
+                        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+                    </div>
+                `;
+                alertDiv.appendChild(alertEl);
+
+                setTimeout(() => {
+                    if (alertEl.parentNode) {
+                        alertEl.classList.remove('show');
+                        setTimeout(() => alertEl.remove(), 300);
+                    }
+                }, 4000);
             });
         });
     });
+
+    // Enhance carousel with additional controls
+    const carousel = document.getElementById('categoryCarousel');
+    if (carousel) {
+        carousel.addEventListener('mouseenter', function() {
+            this.setAttribute('data-bs-ride', 'false');
+        });
+        
+        carousel.addEventListener('mouseleave', function() {
+            this.setAttribute('data-bs-ride', 'carousel');
+        });
+    }
 });
 </script>
 {% endblock %}

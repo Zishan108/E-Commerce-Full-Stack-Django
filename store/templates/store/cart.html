@@ -3,53 +3,62 @@
 {% block title %}Your Cart | Zishan Fashion{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2>Your Cart</h2>
+<div class="container-fluid px-0">
+    <h2 class="mb-3 mb-md-4">Your Cart</h2>
 
     {% if items %}
-    <table class="table table-bordered mt-3">
-        <thead>
-            <tr>
-                <th>Product</th>
-                <th>Price</th>
-                <th>Quantity</th>
-                <th>Total</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in items %}
-            <tr>
-                <td>
-                    <a href="{% url 'store:product_detail' item.product.slug %}">{{ item.product.name }}</a>
-                </td>
-                <td>₹{{ item.product.price }}</td>
-                <td>
-                    <a href="{% url 'store:decrement_cart' item.product.id %}" class="btn btn-sm btn-warning">-</a>
-                    {{ item.quantity }}
-                    <a href="{% url 'store:increment_cart' item.product.id %}" class="btn btn-sm btn-success">+</a>
-                </td>
-                <td>₹{{ item.total_price }}</td>
-                <td>
-                    <a href="{% url 'store:remove_from_cart' item.product.id %}" class="btn btn-danger btn-sm">Remove</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table class="table table-bordered mt-3">
+            <thead class="table-dark">
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>
+                        <a href="{% url 'store:product_detail' item.product.slug %}">{{ item.product.name }}</a>
+                    </td>
+                    <td>₹{{ item.product.price }}</td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <a href="{% url 'store:decrement_cart' item.product.id %}" class="btn btn-sm btn-warning me-2">-</a>
+                            <span class="mx-2">{{ item.quantity }}</span>
+                            <a href="{% url 'store:increment_cart' item.product.id %}" class="btn btn-sm btn-success ms-2">+</a>
+                        </div>
+                    </td>
+                    <td>₹{{ item.total_price }}</td>
+                    <td>
+                        <a href="{% url 'store:remove_from_cart' item.product.id %}" class="btn btn-danger btn-sm">Remove</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-    <div class="mt-3 d-flex justify-content-between align-items-center">
-        <h4>Total: ₹{{ total }}</h4>
+    <div class="mt-3 d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+        <h4 class="mb-3 mb-md-0">Total: ₹{{ total }}</h4>
         
         {% if user.is_authenticated %}
-            <a href="{% url 'store:checkout' %}" class="btn btn-success btn-lg">Proceed to Checkout</a>
+            <a href="{% url 'store:checkout' %}" class="btn btn-success btn-lg w-27 w-md-auto">Proceed to Checkout</a>
         {% else %}
-            <a href="{% url 'users:login' %}?next={% url 'store:checkout' %}" class="btn btn-warning btn-lg">Login to Checkout</a>
+            <a href="{% url 'users:login' %}?next={% url 'store:checkout' %}" class="btn btn-warning btn-lg w-100 w-md-auto">Login to Checkout</a>
         {% endif %}
     </div>
 
     {% else %}
-    <p class="mt-3">Your cart is empty. <a href="{% url 'store:home' %}">Start shopping</a>.</p>
+    <div class="text-center py-5">
+        <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+        <h4>Your cart is empty</h4>
+        <p class="text-muted">Add some products to your cart to see them here.</p>
+        <a href="{% url 'store:home' %}" class="btn btn-primary">Start Shopping</a>
+    </div>
     {% endif %}
 </div>
 {% endblock %}

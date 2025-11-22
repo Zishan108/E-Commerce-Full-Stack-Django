@@ -7,6 +7,7 @@ from .views import (
     CustomPasswordResetConfirmView
 )
 from django.contrib.auth import views as auth_views
+from .api_views import RegisterView, ProfileView, user_dashboard  # Add these imports
 
 app_name = 'users'
 
@@ -27,4 +28,9 @@ urlpatterns = [
     path('password-reset-complete/', auth_views.PasswordResetCompleteView.as_view(
         template_name='users/password_reset_complete.html'
     ), name='password_reset_complete'),
+    
+    # API Routes
+    path('api/register/', RegisterView.as_view(), name='api_register'),
+    path('api/profile/', ProfileView.as_view(), name='api_profile'),
+    path('api/dashboard/', user_dashboard, name='api_dashboard'),
 ]

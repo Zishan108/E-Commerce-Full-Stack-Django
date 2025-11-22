@@ -5,3 +5,4 @@ pillow
 djangorestframework-simplejwt
 drf-yasg
 django-widget-tweaks
+django-import-export

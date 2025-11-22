@@ -3,41 +3,48 @@
 {% block title %}Checkout | Zishan Fashion{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2>Checkout</h2>
+<div class="container-fluid px-0">
+    <h2 class="mb-3 mb-md-4">Checkout</h2>
 
     {% if items %}
-    <table class="table table-bordered mt-3">
-        <thead>
-            <tr>
-                <th>Product</th>
-                <th>Price</th>
-                <th>Quantity</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in items %}
-            <tr>
-                <td>{{ item.product.name }}</td>
-                <td>₹{{ item.product.price }}</td>
-                <td>{{ item.quantity }}</td>
-                <td>₹{{ item.total_price }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table class="table table-bordered mt-3">
+            <thead class="table-dark">
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.product.name }}</td>
+                    <td>₹{{ item.product.price }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>₹{{ item.total_price }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-    <div class="mt-3 d-flex justify-content-between align-items-center">
-        <h4>Total: ₹{{ total }}</h4>
+    <div class="mt-3 d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+        <h4 class="mb-3 mb-md-0">Total: ₹{{ total }}</h4>
         <form method="post" action="{% url 'store:place_order' %}">
             {% csrf_token %}
-            <button type="submit" class="btn btn-success btn-lg">Place Order</button>
+            <button type="submit" class="btn btn-success btn-lg w-100 w-md-auto">Place Order</button>
         </form>
     </div>
 
     {% else %}
-    <p class="mt-3">Your cart is empty. <a href="{% url 'store:home' %}">Start shopping</a>.</p>
+    <div class="text-center py-5">
+        <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+        <h4>Your cart is empty</h4>
+        <p class="text-muted">Add some products to your cart before checking out.</p>
+        <a href="{% url 'store:home' %}" class="btn btn-primary">Start Shopping</a>
+    </div>
     {% endif %}
 </div>
 {% endblock %}

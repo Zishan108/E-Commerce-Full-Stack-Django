@@ -309,6 +309,16 @@
             box-shadow: 0 12px 30px rgba(0,0,0,0.15) !important;
         }
 
+        /* Alert Styles */
+        .cart-alert {
+            position: fixed;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            min-width: 300px;
+        }
+
         /* Responsive adjustments */
         @media (max-width: 992px) {
             .navbar-nav .nav-link {
@@ -335,13 +345,19 @@
             .navbar-scrolled {
                 padding: 0.6rem 0;
             }
+
+            .cart-alert {
+                top: 80px;
+                min-width: 90%;
+                margin: 0 5%;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <div id="cart-alert" class="position-fixed top-0 start-50 translate-middle-x mt-3" style="z-index: 9999;"></div>
+    <div id="cart-alert" class="cart-alert"></div>
 
     <!-- ENHANCED STICKY NAVBAR -->
     <nav class="navbar navbar-expand-lg navbar-light">
@@ -401,7 +417,10 @@
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             <li>
                                 <a class="dropdown-item" href="{% url 'store:cart_view' %}" id="cart-link">
-                                    <i class="fas fa-shopping-cart me-2"></i>Cart ({{ cart_count }})
+                                    <i class="fas fa-shopping-cart me-2"></i>Cart 
+                                    <span id="cart-count-badge" class="badge bg-primary ms-1">
+                                        {{ cart_count|default:0 }}
+                                    </span>
                                 </a>
                             </li>
                             <li>
@@ -619,6 +638,101 @@
             }
         }
 
+        // Global cart functionality
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function showAlert(message, type = 'success') {
+            const alertDiv = document.getElementById('cart-alert');
+            const alertEl = document.createElement('div');
+            alertEl.className = `alert alert-${type} alert-dismissible fade show`;
+            alertEl.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'} me-2"></i>
+                    <div>${message}</div>
+                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            alertDiv.innerHTML = '';
+            alertDiv.appendChild(alertEl);
+
+            // Auto remove alert
+            setTimeout(() => {
+                if (alertEl.parentNode) {
+                    alertEl.classList.remove('show');
+                    setTimeout(() => alertEl.remove(), 300);
+                }
+            }, 4000);
+        }
+
+        function updateCartCount(count) {
+            const cartCountElement = document.getElementById('cart-count-badge');
+            if (cartCountElement) {
+                cartCountElement.textContent = count;
+            }
+        }
+
+        function addToCart(productId, buttonElement = null) {
+            let originalText = '';
+            if (buttonElement) {
+                // Add loading state
+                originalText = buttonElement.innerHTML;
+                buttonElement.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Adding...';
+                buttonElement.disabled = true;
+            }
+
+            fetch(`/cart/add/${productId}/`, {
+                method: 'GET',
+                headers: { 
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    if (response.status === 403) {
+                        window.location.href = "{% url 'users:login' %}?next={{ request.path }}";
+                        return {};
+                    }
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    showAlert(data.message, 'success');
+                    if (data.cart_count !== undefined) {
+                        updateCartCount(data.cart_count);
+                    }
+                } else if (data.message) {
+                    showAlert(data.message, 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('An error occurred while adding to cart.', 'danger');
+            })
+            .finally(() => {
+                if (buttonElement) {
+                    // Reset button state
+                    buttonElement.innerHTML = originalText;
+                    buttonElement.disabled = false;
+                }
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             // Sticky navbar scroll effect
             window.addEventListener('scroll', function() {
@@ -662,6 +776,16 @@
                 });
                 item.addEventListener('mouseleave', function() {
                     this.style.transform = 'translateX(0)';
+                });
+            });
+
+            // Initialize cart buttons
+            const cartButtons = document.querySelectorAll('.btn-cart[data-product-id]');
+            cartButtons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const productId = this.dataset.productId;
+                    addToCart(productId, this);
                 });
             });
         });

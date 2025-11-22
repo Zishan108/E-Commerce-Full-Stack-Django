@@ -135,7 +135,7 @@
 
                         <!-- Additional Actions -->
                         <div class="d-grid gap-2">
-                            <button class="btn btn-outline-dark py-2">
+                            <button class="btn btn-outline-dark py-2 share-btn">
                                 <i class="fas fa-share-alt me-2"></i>
                                 Share Product
                             </button>
@@ -327,138 +327,6 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const buttons = document.querySelectorAll('.btn-cart');
-    const alertDiv = document.getElementById('cart-alert');
-
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-
-    buttons.forEach(btn => {
-        btn.addEventListener('click', function (e) {
-            e.preventDefault();
-            const productId = this.dataset.productId;
-            const button = this;
-            
-            // Add loading state
-            const originalText = button.innerHTML;
-            button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding to Cart...';
-            button.disabled = true;
-
-            fetch(`/cart/add/${productId}/`, {
-                method: 'GET',
-                headers: { 
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRFToken': getCookie('csrftoken')
-                }
-            })
-            .then(res => {
-                if (res.status === 403) {
-                    window.location.href = "{% url 'users:login' %}?next={{ request.path }}";
-                    return {};
-                }
-                return res.json();
-            })
-            .then(data => {
-                // Reset button state
-                button.innerHTML = originalText;
-                button.disabled = false;
-                
-                if (data.status === 'success') {
-                    const alertEl = document.createElement('div');
-                    alertEl.className = 'alert alert-success alert-dismissible fade show';
-                    alertEl.innerHTML = `
-                        <div class="d-flex align-items-center">
-                            <i class="fas fa-check-circle me-2 fs-4"></i>
-                            <div class="flex-grow-1">
-                                <h6 class="mb-1">Product Added Successfully!</h6>
-                                <p class="mb-0">${data.message}</p>
-                            </div>
-                            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
-                        </div>
-                    `;
-                    alertDiv.appendChild(alertEl);
-
-                    // Update cart count in navbar
-                    if (data.cart_count !== undefined) {
-                        const cartCountElement = document.getElementById('cart-link');
-                        if (cartCountElement) {
-                            cartCountElement.innerHTML = `<i class="fas fa-shopping-cart me-2"></i>Cart (${data.cart_count})`;
-                        }
-                    }
-
-                    // Auto remove alert
-                    setTimeout(() => {
-                        if (alertEl.parentNode) {
-                            alertEl.classList.remove('show');
-                            setTimeout(() => alertEl.remove(), 300);
-                        }
-                    }, 4000);
-                } else if (data.message) {
-                    // Show error alert
-                    const alertEl = document.createElement('div');
-                    alertEl.className = 'alert alert-danger alert-dismissible fade show';
-                    alertEl.innerHTML = `
-                        <div class="d-flex align-items-center">
-                            <i class="fas fa-exclamation-triangle me-2 fs-4"></i>
-                            <div class="flex-grow-1">
-                                <h6 class="mb-1">Unable to Add Product</h6>
-                                <p class="mb-0">${data.message}</p>
-                            </div>
-                            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
-                        </div>
-                    `;
-                    alertDiv.appendChild(alertEl);
-
-                    setTimeout(() => {
-                        if (alertEl.parentNode) {
-                            alertEl.classList.remove('show');
-                            setTimeout(() => alertEl.remove(), 300);
-                        }
-                    }, 4000);
-                }
-            })
-            .catch(err => {
-                console.error('Error:', err);
-                // Reset button state
-                button.innerHTML = originalText;
-                button.disabled = false;
-                
-                const alertEl = document.createElement('div');
-                alertEl.className = 'alert alert-danger alert-dismissible fade show';
-                alertEl.innerHTML = `
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-exclamation-triangle me-2 fs-4"></i>
-                        <div class="flex-grow-1">
-                            <h6 class="mb-1">Network Error</h6>
-                            <p class="mb-0">An error occurred while adding to cart. Please try again.</p>
-                        </div>
-                        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
-                    </div>
-                `;
-                alertDiv.appendChild(alertEl);
-
-                setTimeout(() => {
-                    if (alertEl.parentNode) {
-                        alertEl.classList.remove('show');
-                        setTimeout(() => alertEl.remove(), 300);
-                    }
-                }, 4000);
-            });
-        });
-    });
-
     // Thumbnail click functionality (for future multiple images)
     const thumbnails = document.querySelectorAll('.thumbnail img');
     const mainImage = document.querySelector('.product-main-image');
@@ -475,38 +343,47 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Share functionality
-    const shareBtn = document.querySelector('.btn-outline-dark');
-    shareBtn.addEventListener('click', function() {
-        if (navigator.share) {
-            navigator.share({
-                title: '{{ product.name }}',
-                text: 'Check out this amazing product!',
-                url: window.location.href,
-            })
-            .catch(console.error);
-        } else {
-            // Fallback: copy to clipboard
-            navigator.clipboard.writeText(window.location.href).then(() => {
-                const alertEl = document.createElement('div');
-                alertEl.className = 'alert alert-info alert-dismissible fade show';
-                alertEl.innerHTML = `
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-link me-2"></i>
-                        <div>Product link copied to clipboard!</div>
-                        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
-                    </div>
-                `;
-                alertDiv.appendChild(alertEl);
+    const shareBtn = document.querySelector('.share-btn');
+    if (shareBtn) {
+        shareBtn.addEventListener('click', function() {
+            if (navigator.share) {
+                navigator.share({
+                    title: '{{ product.name }}',
+                    text: 'Check out this amazing product!',
+                    url: window.location.href,
+                })
+                .catch(console.error);
+            } else {
+                // Fallback: copy to clipboard
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    // Use the global showAlert function from base.html
+                    if (typeof showAlert === 'function') {
+                        showAlert('Product link copied to clipboard!', 'info');
+                    } else {
+                        // Fallback if global function not available
+                        const alertDiv = document.getElementById('cart-alert');
+                        const alertEl = document.createElement('div');
+                        alertEl.className = 'alert alert-info alert-dismissible fade show';
+                        alertEl.innerHTML = `
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-link me-2"></i>
+                                <div>Product link copied to clipboard!</div>
+                                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+                            </div>
+                        `;
+                        alertDiv.appendChild(alertEl);
 
-                setTimeout(() => {
-                    if (alertEl.parentNode) {
-                        alertEl.classList.remove('show');
-                        setTimeout(() => alertEl.remove(), 300);
+                        setTimeout(() => {
+                            if (alertEl.parentNode) {
+                                alertEl.classList.remove('show');
+                                setTimeout(() => alertEl.remove(), 300);
+                            }
+                        }, 3000);
                     }
-                }, 3000);
-            });
-        }
-    });
+                });
+            }
+        });
+    }
 });
 </script>
 {% endblock %}

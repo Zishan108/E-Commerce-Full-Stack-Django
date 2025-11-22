@@ -34,11 +34,17 @@ def home(request):
     # Get featured products for other sections if needed
     featured_products = Product.objects.filter(is_active=True).order_by('?')[:8]  # Random 8 products
     
+    # Get cart count for authenticated users
+    cart_count = 0
+    if request.user.is_authenticated:
+        cart_count = CartItem.objects.filter(user=request.user).count()
+    
     context = {
         'categories': categories,
         'trending_products': trending_products,  # For trendy section
         'latest_products': latest_products,      # For latest products section
         'featured_products': featured_products,  # For featured section if needed
+        'cart_count': cart_count,
     }
     return render(request, 'store/home.html', context)
 
@@ -47,10 +53,16 @@ def category_products(request, category_slug):
     category = get_object_or_404(Category, slug=category_slug)
     products = Product.objects.filter(category=category, is_active=True)
     
+    # Get cart count for authenticated users
+    cart_count = 0
+    if request.user.is_authenticated:
+        cart_count = CartItem.objects.filter(user=request.user).count()
+    
     context = {
         'category': category,
         'products': products,
         'categories': Category.objects.all(),
+        'cart_count': cart_count,
     }
     return render(request, 'store/category_products.html', context)
 
@@ -80,6 +92,11 @@ def add_to_cart(request, product_id):
             if cart_item.quantity < product.stock:
                 cart_item.quantity += 1
                 cart_item.save()
+            else:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Product is out of stock!',
+                })
         
         cart_count = CartItem.objects.filter(user=request.user).count()
         
@@ -89,7 +106,18 @@ def add_to_cart(request, product_id):
             'cart_count': cart_count
         })
     
-    return redirect('store:product_detail', slug=product.slug)
+    # Non-AJAX request (fallback)
+    cart_item, created = CartItem.objects.get_or_create(
+        user=request.user,
+        product=product,
+        defaults={'quantity': 1}
+    )
+    
+    if not created and cart_item.quantity < product.stock:
+        cart_item.quantity += 1
+        cart_item.save()
+    
+    return redirect('store:cart_view')
 
 @login_required
 def cart_view(request):
